@@ -1,9 +1,18 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // Note: In production, this should be handled server-side
-});
+// Initialize OpenAI client with error handling
+const getOpenAIClient = () => {
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('OpenAI API key is not configured. Please add VITE_OPENAI_API_KEY to your .env file.');
+  }
+  
+  return new OpenAI({
+    apiKey,
+    dangerouslyAllowBrowser: true // Note: In production, this should be handled server-side
+  });
+};
 
 export interface TripPlanningRequest {
   destination: string;
@@ -52,6 +61,14 @@ export interface AITripPlan {
 }
 
 export const generateTripPlan = async (request: TripPlanningRequest): Promise<AITripPlan> => {
+  try {
+    const openai = getOpenAIClient();
+  } catch (error) {
+    console.error('OpenAI configuration error:', error);
+    // Return fallback trip plan when API key is missing
+    return generateFallbackTripPlan(request);
+  }
+  
   const startDate = new Date(request.startDate);
   const endDate = new Date(request.endDate);
   const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -120,6 +137,7 @@ Focus on creating an authentic, well-researched itinerary that captures the esse
 `;
 
   try {
+    const openai = getOpenAIClient();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
