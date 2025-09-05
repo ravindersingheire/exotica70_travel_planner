@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Users, Plus, Sparkles, UserPlus, Lightbulb } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, Sparkles, UserPlus, Lightbulb, X } from 'lucide-react';
 
 interface TripPlannerProps {
   onTripCreate: (tripData: any) => void;
@@ -11,10 +11,12 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
   const [destination, setDestination] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [tripType, setTripType] = useState('');
+  const [tripType, setTripType] = useState('relaxation');
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [collaborators, setCollaborators] = useState<string[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectingStartDate, setSelectingStartDate] = useState(true);
 
   // Beautiful travel videos from Pexels - various landscapes and experiences
   const travelVideos = [
@@ -85,6 +87,79 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
       tripType,
       collaborators
     });
+  };
+
+  const handleDateSelect = (date: string) => {
+    if (selectingStartDate) {
+      setStartDate(date);
+      setSelectingStartDate(false);
+    } else {
+      setEndDate(date);
+      setShowCalendar(false);
+      setSelectingStartDate(true);
+    }
+  };
+
+  const openCalendar = () => {
+    setShowCalendar(true);
+    setSelectingStartDate(true);
+  };
+
+  const getCurrentMonth = () => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  };
+
+  const getNextMonth = () => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  };
+
+  const formatDateForDisplay = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  };
+
+  const generateCalendarDays = (month: Date) => {
+    const year = month.getFullYear();
+    const monthIndex = month.getMonth();
+    const firstDay = new Date(year, monthIndex, 1);
+    const lastDay = new Date(year, monthIndex + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    const days = [];
+    const current = new Date(startDate);
+    
+    for (let i = 0; i < 42; i++) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+    
+    return days;
+  };
+
+  const isDateInRange = (date: Date) => {
+    if (!startDate || !endDate) return false;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return date >= start && date <= end;
+  };
+
+  const isDateSelected = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return dateStr === startDate || dateStr === endDate;
+  };
+
+  const isDateDisabled = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
   };
 
   return (
@@ -162,7 +237,6 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                 onChange={(e) => setTripType(e.target.value)}
                 className="w-full px-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all appearance-none"
               >
-                <option value="">Select trip type (optional)</option>
                 <option value="relaxation">Relaxation</option>
                 <option value="adventure">Adventure</option>
                 <option value="family">Family</option>
@@ -175,30 +249,155 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
             </div>
 
             {/* Dates */}
-            <div>
+            <div className="relative">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 When are you thinking?
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="relative">
-                  <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
-                  />
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
+                  <div className="relative">
+                    <Calendar 
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer" 
+                      onClick={openCalendar}
+                    />
+                    <input
+                      type="text"
+                      value={formatDateForDisplay(startDate)}
+                      onClick={openCalendar}
+                      placeholder="Select start date"
+                      readOnly
+                      className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer"
+                    />
+                  </div>
                 </div>
                 <div className="relative">
-                  <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
-                  />
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Return Date</label>
+                  <div className="relative">
+                    <Calendar 
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer" 
+                      onClick={openCalendar}
+                    />
+                    <input
+                      type="text"
+                      value={formatDateForDisplay(endDate)}
+                      onClick={openCalendar}
+                      placeholder="Select return date"
+                      readOnly
+                      className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
+              
+              {/* Custom Calendar Popup */}
+              {showCalendar && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {selectingStartDate ? 'Select Start Date' : 'Select Return Date'}
+                    </h3>
+                    <button
+                      onClick={() => setShowCalendar(false)}
+                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Current Month */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3 text-center">
+                        {getCurrentMonth().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      </h4>
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                          <div key={day} className="text-xs font-medium text-gray-500 text-center py-2">
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-7 gap-1">
+                        {generateCalendarDays(getCurrentMonth()).map((date, index) => {
+                          const isCurrentMonth = date.getMonth() === getCurrentMonth().getMonth();
+                          const isSelected = isDateSelected(date);
+                          const isInRange = isDateInRange(date);
+                          const isDisabled = isDateDisabled(date);
+                          const dateStr = date.toISOString().split('T')[0];
+                          
+                          return (
+                            <button
+                              key={index}
+                              onClick={() => !isDisabled && handleDateSelect(dateStr)}
+                              disabled={isDisabled}
+                              className={`
+                                w-8 h-8 text-sm rounded-lg transition-all
+                                ${!isCurrentMonth ? 'text-gray-300' : ''}
+                                ${isSelected ? 'bg-orange-500 text-white font-semibold' : ''}
+                                ${isInRange && !isSelected ? 'bg-orange-100 text-orange-700' : ''}
+                                ${!isSelected && !isInRange && isCurrentMonth && !isDisabled ? 'hover:bg-gray-100 text-gray-700' : ''}
+                                ${isDisabled ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer'}
+                              `}
+                            >
+                              {date.getDate()}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* Next Month */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3 text-center">
+                        {getNextMonth().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      </h4>
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                          <div key={day} className="text-xs font-medium text-gray-500 text-center py-2">
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-7 gap-1">
+                        {generateCalendarDays(getNextMonth()).map((date, index) => {
+                          const isCurrentMonth = date.getMonth() === getNextMonth().getMonth();
+                          const isSelected = isDateSelected(date);
+                          const isInRange = isDateInRange(date);
+                          const isDisabled = isDateDisabled(date);
+                          const dateStr = date.toISOString().split('T')[0];
+                          
+                          return (
+                            <button
+                              key={index}
+                              onClick={() => !isDisabled && handleDateSelect(dateStr)}
+                              disabled={isDisabled}
+                              className={`
+                                w-8 h-8 text-sm rounded-lg transition-all
+                                ${!isCurrentMonth ? 'text-gray-300' : ''}
+                                ${isSelected ? 'bg-orange-500 text-white font-semibold' : ''}
+                                ${isInRange && !isSelected ? 'bg-orange-100 text-orange-700' : ''}
+                                ${!isSelected && !isInRange && isCurrentMonth && !isDisabled ? 'hover:bg-gray-100 text-gray-700' : ''}
+                                ${isDisabled ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer'}
+                              `}
+                            >
+                              {date.getDate()}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {startDate && endDate && (
+                    <div className="mt-4 p-3 bg-orange-50 rounded-lg">
+                      <p className="text-sm text-orange-700 text-center">
+                        <span className="font-semibold">Selected:</span> {formatDateForDisplay(startDate)} - {formatDateForDisplay(endDate)}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Collaborators */}
