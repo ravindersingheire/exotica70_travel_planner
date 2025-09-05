@@ -123,21 +123,21 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
         <div className="absolute inset-0 bg-black bg-opacity-30 z-20" />
       </div>
 
-      <div className="max-w-2xl w-full ml-8 lg:ml-16">
-        <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 md:p-8 border border-white border-opacity-80 relative z-10">
+      <div className="max-w-xl w-full ml-8 lg:ml-16">
+        <div className="bg-white bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-2xl p-5 md:p-6 border border-white border-opacity-80 relative z-10">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 font-heading">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 font-heading">
               Every Trip Has a Plan. What's Yours?
             </h1>
-            <p className="text-base text-gray-800 font-medium font-body">
+            <p className="text-sm text-gray-800 font-medium font-body">
               Craft the perfect trip that's uniquely yours.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Destination */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Where's your dream destination?
               </label>
               <div className="relative">
@@ -147,20 +147,20 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                   placeholder="e.g. Paris, Hawaii, Japan, India"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                  className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
                 />
               </div>
             </div>
 
             {/* Trip Type */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 What type of trip are you planning?
               </label>
               <select
                 value={tripType}
                 onChange={(e) => setTripType(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all appearance-none"
+                className="w-full px-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all appearance-none"
               >
                 <option value="">Select trip type (optional)</option>
                 <option value="relaxation">Relaxation</option>
@@ -176,7 +176,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
 
             {/* Dates */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 When are you thinking?
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -186,7 +186,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                    className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
                   />
                 </div>
                 <div className="relative">
@@ -195,7 +195,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                    className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -203,7 +203,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
 
             {/* Collaborators */}
             <div>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <button
                   type="button"
                   onClick={() => setShowCollaborators(!showCollaborators)}
@@ -225,15 +225,15 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
               </div>
               
               {showCollaborators && (
-                <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="p-3 bg-gray-50 rounded-xl">
                   <input
                     type="email"
                     placeholder="Enter email address"
-                    className="w-full px-4 py-3 border border-gray-200 bg-white rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 bg-white rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none"
                   />
                   <button
                     type="button"
-                    className="mt-3 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
+                    className="mt-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
                   >
                     Send Invite
                   </button>
@@ -245,7 +245,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
             <button
               type="submit"
               disabled={!destination}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2.5 px-6 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
             >
               Start planning
             </button>
@@ -254,7 +254,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
               <button
                 type="button"
                 onClick={onInspireMe}
-                className="inline-flex items-center space-x-2 text-orange-600 hover:text-orange-700 transition-all font-medium mb-4 hover:scale-105 group"
+                className="inline-flex items-center space-x-2 text-orange-600 hover:text-orange-700 transition-all font-medium hover:scale-105 group"
               >
                 <div className="flex items-center space-x-1">
                   <Lightbulb className="h-5 w-5 group-hover:text-yellow-500 transition-colors" />
