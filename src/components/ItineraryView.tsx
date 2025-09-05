@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { DayPlanner } from './DayPlanner';
 import { ActivityModal } from './ActivityModal';
 import { ShareModal } from './ShareModal';
+import { SpendingSummaryModal } from './SpendingSummaryModal';
 import { Trip, DayItinerary, Activity } from '../types';
 import { generateDayItineraries } from '../utils/tripUtils';
 import { generateActivitySuggestions } from '../utils/activitySuggestions';
-import { ArrowLeft, Share2, Plus, Calendar, MapPin } from 'lucide-react';
+import { ArrowLeft, Share2, Plus, Calendar, MapPin, PieChart } from 'lucide-react';
 
 interface ItineraryViewProps {
   trip: Trip;
@@ -19,6 +20,7 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ trip, tripType = '
   const [selectedDay, setSelectedDay] = useState<DayItinerary | null>(initialDayItineraries[0] || null);
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showSpendingSummary, setShowSpendingSummary] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
 
   const handleAddActivity = (activity: Activity) => {
@@ -112,6 +114,13 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ trip, tripType = '
               </div>
             </div>
             <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowSpendingSummary(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-xl hover:bg-purple-200 transition-colors font-medium"
+              >
+                <PieChart className="h-4 w-4" />
+                <span>Spending Analysis</span>
+              </button>
               <button
                 onClick={() => setShowShareModal(true)}
                 className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
@@ -213,6 +222,15 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ trip, tripType = '
         <ShareModal
           trip={trip}
           onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {/* Spending Summary Modal */}
+      {showSpendingSummary && (
+        <SpendingSummaryModal
+          dayItineraries={dayItineraries}
+          destination={trip.destination}
+          onClose={() => setShowSpendingSummary(false)}
         />
       )}
     </div>

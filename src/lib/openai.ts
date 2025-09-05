@@ -268,3 +268,202 @@ const generateFallbackTripPlan = (request: TripPlanningRequest): AITripPlan => {
     }
   };
 };
+export interface CategorySpending {
+  category: string;
+  amount: number;
+  percentage: number;
+  count: number;
+}
+
+export interface DailySpending {
+  date: string;
+  amount: number;
+}
+
+export interface SpendingSummary {
+  totalBudget: number;
+  dailyAverage: number;
+  categoryBreakdown: CategorySpending[];
+  dailyBreakdown: DailySpending[];
+  insights: string[];
+  budgetTips: string[];
+  currencyInfo: string;
+}
+
+export const generateSpendingSummary = async (dayItineraries: any[], destination: string): Promise<SpendingSummary> => {
+  try {
+    const openai = getOpenAIClient();
+  } catch (error) {
+    console.error('OpenAI configuration error:', error);
+    // Return fallback spending summary when API key is missing
+    return generateFallbackSpendingSummary(dayItineraries, destination);
+  }
+
+  // Calculate spending data from itineraries
+  const spendingData = calculateSpendingFromItineraries(dayItineraries);
+  
+  const prompt = `
+Analyze the following travel spending data for a trip to ${destination} and provide insights:
+
+Spending Data:
+${JSON.stringify(spendingData, null, 2)}
+
+Please provide a comprehensive spending analysis in JSON format with the following structure:
+{
+  "totalBudget": number,
+  "dailyAverage": number,
+  "categoryBreakdown": [
+    {
+      "category": "string",
+      "amount": number,
+      "percentage": number,
+      "count": number
+    }
+  ],
+  "dailyBreakdown": [
+    {
+      "date": "YYYY-MM-DD",
+      "amount": number
+    }
+  ],
+  "insights": [
+    "string array of 4-6 key insights about spending patterns"
+  ],
+  "budgetTips": [
+    "string array of 6-8 practical money-saving tips specific to ${destination}"
+  ],
+  "currencyInfo": "string about local currency and exchange tips"
+}
+
+Requirements:
+1. Analyze spending patterns and identify the highest expense categories
+2. Provide insights about budget allocation and spending efficiency
+3. Suggest practical ways to save money while maintaining trip quality
+4. Include destination-specific financial tips and currency advice
+5. Highlight any unusual spending patterns or recommendations
+6. Consider local cost of living and typical tourist expenses in ${destination}
+
+Focus on actionable insights that help travelers make informed financial decisions.
+`;
+
+  try {
+    const openai = getOpenAIClient();
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are a financial travel advisor with expertise in budget optimization and destination-specific spending patterns. Provide detailed, practical spending analysis in valid JSON format only."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (!response) {
+      throw new Error('No response from OpenAI');
+    }
+
+    // Parse the JSON response
+    const spendingSummary: SpendingSummary = JSON.parse(response);
+    
+    // Validate the response structure
+    if (!spendingSummary.categoryBreakdown || !Array.isArray(spendingSummary.categoryBreakdown)) {
+      throw new Error('Invalid spending summary structure');
+    }
+
+    return spendingSummary;
+  } catch (error) {
+    console.error('Error generating spending summary:', error);
+    
+    // Fallback to basic analysis if OpenAI fails
+    return generateFallbackSpendingSummary(dayItineraries, destination);
+  }
+};
+
+const calculateSpendingFromItineraries = (dayItineraries: any[]) => {
+  const categoryTotals: Record<string, { amount: number; count: number }> = {};
+  const dailyTotals: Record<string, number> = {};
+  let totalBudget = 0;
+
+  dayItineraries.forEach(day => {
+    let dayTotal = 0;
+    
+    day.activities.forEach((activity: any) => {
+      if (activity.cost && activity.cost > 0) {
+        const category = activity.category || 'other';
+        const cost = activity.cost;
+        
+        // Add to category totals
+        if (!categoryTotals[category]) {
+          categoryTotals[category] = { amount: 0, count: 0 };
+        }
+        categoryTotals[category].amount += cost;
+        categoryTotals[category].count += 1;
+        
+        dayTotal += cost;
+        totalBudget += cost;
+      }
+    });
+    
+    dailyTotals[day.date] = dayTotal;
+  });
+
+  return {
+    totalBudget,
+    categoryTotals,
+    dailyTotals,
+    dayCount: dayItineraries.length
+  };
+};
+
+const generateFallbackSpendingSummary = (dayItineraries: any[], destination: string): SpendingSummary => {
+  const spendingData = calculateSpendingFromItineraries(dayItineraries);
+  
+  // Convert category totals to breakdown format
+  const categoryBreakdown: CategorySpending[] = Object.entries(spendingData.categoryTotals).map(([category, data]) => ({
+    category,
+    amount: data.amount,
+    percentage: Math.round((data.amount / spendingData.totalBudget) * 100),
+    count: data.count
+  })).sort((a, b) => b.amount - a.amount);
+
+  // Convert daily totals to breakdown format
+  const dailyBreakdown: DailySpending[] = Object.entries(spendingData.dailyTotals).map(([date, amount]) => ({
+    date,
+    amount
+  })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const dailyAverage = spendingData.totalBudget / spendingData.dayCount;
+
+  return {
+    totalBudget: spendingData.totalBudget,
+    dailyAverage: Math.round(dailyAverage),
+    categoryBreakdown,
+    dailyBreakdown,
+    insights: [
+      `Your total trip budget is $${spendingData.totalBudget.toLocaleString()} across ${spendingData.dayCount} days`,
+      `Daily average spending: $${Math.round(dailyAverage).toLocaleString()}`,
+      `Highest spending category: ${categoryBreakdown[0]?.category || 'N/A'} (${categoryBreakdown[0]?.percentage || 0}%)`,
+      `You have ${categoryBreakdown.length} different expense categories planned`,
+      `Consider booking activities in advance for potential discounts`,
+      `Local currency exchange rates can impact your actual spending`
+    ],
+    budgetTips: [
+      'Book attractions and activities online in advance for discounts',
+      'Use local public transportation instead of taxis when possible',
+      'Eat at local restaurants away from tourist areas for better prices',
+      'Look for free walking tours and city attractions',
+      'Consider staying in accommodations with kitchen facilities',
+      'Use travel reward credit cards for additional savings',
+      'Download local discount apps and check for city tourism cards',
+      'Set daily spending limits to stay within budget'
+    ],
+    currencyInfo: `Research current exchange rates for ${destination} and consider using local currency for better rates`
+  };
+};
