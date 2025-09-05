@@ -140,8 +140,9 @@ Requirements:
 10. Suggest breakfast, lunch, dinner, and snack options with variety in dining styles and price points
 
 Focus on creating an authentic, well-researched itinerary that captures the essence of ${request.destination} while catering to a ${request.tripType} travel style. Pay special attention to the local food and drink culture, including traditional dishes, popular beverages, dining customs, and unique culinary experiences.
-`;
+
 CRITICAL: Always include outbound flight from ${request.fromLocation} to ${request.destination} on Day 1, and return flight from ${request.destination} to ${request.fromLocation} on the final day. Include realistic flight times, airlines, and costs.
+`;
 
   try {
     const openai = getOpenAIClient();
