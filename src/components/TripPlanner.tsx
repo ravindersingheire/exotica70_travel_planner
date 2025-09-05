@@ -8,6 +8,7 @@ interface TripPlannerProps {
 }
 
 export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspireMe, inspirationDestination }) => {
+  const [fromLocation, setFromLocation] = useState('');
   const [destination, setDestination] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -79,9 +80,10 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!destination || !startDate || !endDate) return;
+    if (!fromLocation || !destination || !startDate || !endDate) return;
 
     onTripCreate({
+      fromLocation,
       destination,
       startDate,
       endDate,
@@ -254,6 +256,23 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* From Location */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Where are you traveling from?
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                  type="text"
+                  value={fromLocation}
+                  onChange={(e) => setFromLocation(e.target.value)}
+                  placeholder="e.g. New York, London, Mumbai"
+                  className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                />
+              </div>
+            </div>
+
             {/* Destination */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -499,7 +518,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={!destination}
+              disabled={!fromLocation || !destination}
               className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2.5 px-6 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
             >
               Start planning

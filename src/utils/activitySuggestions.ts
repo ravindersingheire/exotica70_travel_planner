@@ -64,6 +64,7 @@ const genericActivities: DestinationData = {
 };
 
 export const generateActivitySuggestions = (
+  fromLocation: string,
   destination: string, 
   tripType: string, 
   dayItineraries: DayItinerary[]
@@ -75,6 +76,26 @@ export const generateActivitySuggestions = (
     const activities: Activity[] = [];
     const dayNumber = index + 1;
     
+    // First day: Add flight as first activity
+    if (dayNumber === 1) {
+      const flightActivity = generateFlightActivity(fromLocation, destination, 'outbound', day.date);
+      if (flightActivity) activities.push(flightActivity);
+    }
+    
+    // Last day: Add return flight as last activity
+    const isLastDay = dayNumber === dayItineraries.length;
+    if (isLastDay) {
+      const returnFlightActivity = generateFlightActivity(destination, fromLocation, 'return', day.date);
+      if (returnFlightActivity) {
+        // Add return flight at the end
+        activities.push(returnFlightActivity);
+        return {
+          ...day,
+          activities,
+          notes: `Day ${dayNumber} - Departure from ${destination} back to ${fromLocation}`
+        };
+      }
+    }
     // Morning activity (9:00-12:00)
     const morningActivity = generateActivity(
       destinationData, 
@@ -229,6 +250,69 @@ const generateActivity = (
     cost,
     bookedStatus: 'not-booked'
   };
+};
+
+const generateFlightActivity = (
+  fromLocation: string,
+  toLocation: string,
+  type: 'outbound' | 'return',
+  date: string
+): Activity | null => {
+  const isOutbound = type === 'outbound';
+  
+  // Generate realistic flight times
+  const departureTime = isOutbound ? '08:00' : '14:00';
+  const arrivalTime = isOutbound ? '14:00' : '20:00'; // Assuming 6-hour journey including layovers
+  
+  // Estimate flight cost based on route (simplified)
+  const estimatedCost = estimateFlightCost(fromLocation, toLocation);
+  
+  return {
+    id: crypto.randomUUID(),
+    title: `Flight ${isOutbound ? 'to' : 'from'} ${isOutbound ? toLocation : fromLocation}`,
+    description: `${isOutbound ? 'Departure' : 'Return'} flight from ${fromLocation} to ${toLocation}. Check-in 2 hours before departure.`,
+    location: `${fromLocation} Airport`,
+    startTime: departureTime,
+    endTime: arrivalTime,
+    category: 'transport',
+    notes: `${isOutbound ? 'Outbound' : 'Return'} flight - arrive at airport 2 hours early for international flights`,
+    cost: estimatedCost,
+    bookedStatus: 'not-booked'
+  };
+};
+
+const estimateFlightCost = (fromLocation: string, toLocation: string): number => {
+  // Simplified flight cost estimation based on common routes
+  const from = fromLocation.toLowerCase();
+  const to = toLocation.toLowerCase();
+  
+  // Domestic flights
+  if ((from.includes('usa') || from.includes('america')) && (to.includes('usa') || to.includes('america'))) {
+    return 300;
+  }
+  
+  // Short international flights (within region)
+  if ((from.includes('europe') && to.includes('europe')) || 
+      (from.includes('asia') && to.includes('asia'))) {
+    return 200;
+  }
+  
+  // Long-haul international flights
+  if ((from.includes('usa') && to.includes('europe')) ||
+      (from.includes('europe') && to.includes('usa')) ||
+      (from.includes('usa') && to.includes('asia')) ||
+      (from.includes('asia') && to.includes('usa'))) {
+    return 800;
+  }
+  
+  // Trans-continental flights
+  if ((from.includes('europe') && to.includes('asia')) ||
+      (from.includes('asia') && to.includes('europe'))) {
+    return 600;
+  }
+  
+  // Default international flight cost
+  return 500;
 };
 
 const getRandomItem = (array: string[]): string => {

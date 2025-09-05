@@ -15,6 +15,7 @@ const getOpenAIClient = () => {
 };
 
 export interface TripPlanningRequest {
+  fromLocation: string;
   destination: string;
   startDate: string;
   endDate: string;
@@ -74,9 +75,10 @@ export const generateTripPlan = async (request: TripPlanningRequest): Promise<AI
   const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
   const prompt = `
-Create a detailed ${duration}-day trip itinerary for ${request.destination} from ${request.startDate} to ${request.endDate}.
+Create a detailed ${duration}-day trip itinerary for ${request.destination} from ${request.startDate} to ${request.endDate}, traveling from ${request.fromLocation}.
 
 Trip Details:
+- From: ${request.fromLocation}
 - Destination: ${request.destination}
 - Duration: ${duration} days
 - Trip Type: ${request.tripType}
@@ -123,6 +125,8 @@ Please provide a comprehensive trip plan in JSON format with the following struc
 }
 
 Requirements:
+1. IMPORTANT: Include flight information from ${request.fromLocation} to ${request.destination} as the first activity on Day 1, and return flight as the last activity on the final day
+2. Suggest realistic flight times and airlines that operate this route
 1. Create realistic daily schedules (8 AM to 10 PM)
 2. Include a mix of must-see attractions, local experiences, and ${request.tripType} activities
 3. Suggest specific restaurants, hotels, and attractions with real names when possible
@@ -137,6 +141,7 @@ Requirements:
 
 Focus on creating an authentic, well-researched itinerary that captures the essence of ${request.destination} while catering to a ${request.tripType} travel style. Pay special attention to the local food and drink culture, including traditional dishes, popular beverages, dining customs, and unique culinary experiences.
 `;
+CRITICAL: Always include outbound flight from ${request.fromLocation} to ${request.destination} on Day 1, and return flight from ${request.destination} to ${request.fromLocation} on the final day. Include realistic flight times, airlines, and costs.
 
   try {
     const openai = getOpenAIClient();

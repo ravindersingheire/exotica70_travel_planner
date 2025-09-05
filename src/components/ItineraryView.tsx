@@ -15,7 +15,7 @@ interface ItineraryViewProps {
 }
 
 export const ItineraryView: React.FC<ItineraryViewProps> = ({ trip, tripType = '', onBack }) => {
-  const initialDayItineraries = generateActivitySuggestions(trip.destination, tripType, generateDayItineraries(trip));
+  const initialDayItineraries = generateActivitySuggestions('Your Location', trip.destination, tripType, generateDayItineraries(trip));
   const [dayItineraries, setDayItineraries] = useState<DayItinerary[]>(initialDayItineraries);
   const [selectedDay, setSelectedDay] = useState<DayItinerary | null>(initialDayItineraries[0] || null);
   const [showActivityModal, setShowActivityModal] = useState(false);

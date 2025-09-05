@@ -131,6 +131,7 @@ function App() {
     try {
       // Generate AI trip plan
       const aiTripPlan = await generateTripPlan({
+        fromLocation: tripData.fromLocation,
         destination: tripData.destination,
         startDate: tripData.startDate,
         endDate: tripData.endDate,
