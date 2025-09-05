@@ -69,13 +69,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Navigation */}
           <nav className="hidden lg:flex items-center space-x-4">
-            <button 
-              onClick={onHomeClick}
-              className="text-gray-700 hover:text-orange-500 transition-colors font-medium"
-            >
-              Home
-            </button>
-
             {/* Domestic Dropdown */}
             <div className="relative dropdown-wrapper">
               <button 
@@ -448,9 +441,6 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            <a href="#" className="text-gray-700 hover:text-orange-500 transition-colors font-medium">
-              Blogs
-            </a>
           </nav>
 
           {/* Actions */}
