@@ -132,8 +132,10 @@ Requirements:
 7. Consider travel time between activities
 8. Include rest periods and meal times
 9. Adapt suggestions based on the "${request.tripType}" trip type
+9. Include diverse food and drink experiences: local cuisine, street food, cafés, bars, cooking classes, food markets, and beverage tastings
+10. Suggest breakfast, lunch, dinner, and snack options with variety in dining styles and price points
 
-Focus on creating an authentic, well-researched itinerary that captures the essence of ${request.destination} while catering to a ${request.tripType} travel style.
+Focus on creating an authentic, well-researched itinerary that captures the essence of ${request.destination} while catering to a ${request.tripType} travel style. Pay special attention to the local food and drink culture, including traditional dishes, popular beverages, dining customs, and unique culinary experiences.
 `;
 
   try {

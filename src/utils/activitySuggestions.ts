@@ -13,7 +13,7 @@ interface DestinationData {
 const destinationDatabase: Record<string, DestinationData> = {
   'paris': {
     attractions: ['Eiffel Tower', 'Louvre Museum', 'Notre-Dame Cathedral', 'Arc de Triomphe', 'Sacré-Cœur Basilica', 'Champs-Élysées Walk', 'Montmartre District', 'Seine River Cruise', 'Palace of Versailles', 'Musée d\'Orsay'],
-    restaurants: ['Le Jules Verne Restaurant', 'L\'Ambroisie', 'Bistrot Paul Bert', 'L\'As du Fallafel', 'Breizh Café', 'Du Pain et des Idées', 'Pierre Hermé Macarons', 'Café de Flore'],
+    restaurants: ['Le Jules Verne Restaurant', 'L\'Ambroisie', 'Bistrot Paul Bert', 'L\'As du Fallafel', 'Breizh Café', 'Du Pain et des Idées', 'Pierre Hermé Macarons', 'Café de Flore', 'Le Comptoir du Relais', 'L\'Ami Jean', 'Septime', 'Le Chateaubriand', 'Pink Mamma', 'Breizh Café Crêperie', 'Marché des Enfants Rouges Food Market', 'Wine Bar at Le Mary Celeste', 'Hemingway Bar at The Ritz', 'Le Procope Historic Café', 'Angelina Hot Chocolate', 'Berthillon Ice Cream', 'Eric Kayser Bakery', 'Poilâne Bakery'],
     activities: ['Seine River Walk', 'Latin Quarter Stroll', 'Luxembourg Gardens Picnic', 'Galeries Lafayette Shopping', 'Paris Wine Tasting Tour', 'French Cooking Class', 'Photography Walk Montmartre'],
     accommodations: ['Hotel Plaza Athénée', 'Le Meurice', 'Hotel des Grands Boulevards', 'Generator Paris'],
     transport: ['Metro Day Pass', 'Vélib\' Bike Rental', 'Airport Transfer', 'Taxi to Versailles'],
@@ -21,7 +21,7 @@ const destinationDatabase: Record<string, DestinationData> = {
   },
   'tokyo': {
     attractions: ['Tokyo Tower', 'Senso-ji Temple', 'Meiji Shrine', 'Shibuya Crossing', 'Tsukiji Outer Market', 'Imperial Palace East Gardens', 'Harajuku Takeshita Street', 'Akihabara Electric Town', 'Ueno Park', 'Tokyo Skytree'],
-    restaurants: ['Sukiyabashi Jiro Sushi', 'Ramen Yokocho Alley', 'Tsukiji Sushi Dai', 'Gonpachi Shibuya', 'Nabezo All-You-Can-Eat', 'Robot Restaurant Show', 'Memory Lane Yakitori'],
+    restaurants: ['Sukiyabashi Jiro Sushi', 'Ramen Yokocho Alley', 'Tsukiji Sushi Dai', 'Gonpachi Shibuya', 'Nabezo All-You-Can-Eat', 'Robot Restaurant Show', 'Memory Lane Yakitori', 'Ichiran Ramen', 'Genki Sushi', 'Kaikaya by the Sea', 'Tonki Tonkatsu', 'Daiwa Sushi', 'Golden Gai Bar District', 'New York Grill Sake Bar', 'Kagari Ramen', 'Tempura Daikokuya', 'Monjayaki at Tsukishima', 'Izakaya Torikizoku', 'Blue Note Tokyo Jazz & Drinks', 'Starbucks Reserve Roastery Tokyo', 'Takoyaki Street Food', 'Matcha Café Maiko'],
     activities: ['Shinjuku Gyoen Cherry Blossoms', 'Ryogoku Sumo Tournament', 'Shibuya Karaoke Night', 'Traditional Tea Ceremony', 'Manga Café Experience', 'Oedo Onsen Monogatari', 'Kabuki-za Theatre'],
     accommodations: ['Park Hyatt Tokyo', 'Aman Tokyo', 'Capsule Hotel', 'Ryokan Experience'],
     transport: ['JR Pass', 'Tokyo Metro Pass', 'Narita Express', 'Taxi Service'],
@@ -29,7 +29,7 @@ const destinationDatabase: Record<string, DestinationData> = {
   },
   'bali': {
     attractions: ['Tanah Lot Temple', 'Uluwatu Temple', 'Jatiluwih Rice Terraces', 'Mount Batur Sunrise Trek', 'Sekumpul Waterfall', 'Sacred Monkey Forest Sanctuary', 'Besakih Mother Temple', 'Nusa Penida Island Tour'],
-    restaurants: ['Locavore Restaurant', 'Mozaic Restaurant Gastronomique', 'Warung Babi Guling Ibu Oka', 'Bebek Bengil Dirty Duck', 'Naughty Nuri\'s Warung', 'Café Organic Ubud'],
+    restaurants: ['Locavore Restaurant', 'Mozaic Restaurant Gastronomique', 'Warung Babi Guling Ibu Oka', 'Bebek Bengil Dirty Duck', 'Naughty Nuri\'s Warung', 'Café Organic Ubud', 'Merah Putih Restaurant', 'Sarong Restaurant', 'Mama San Kitchen Bar', 'La Lucciola Beachfront', 'Warung Made Seminyak', 'Gado Gado Boplo', 'Jimbaran Seafood Beach BBQ', 'Potato Head Beach Club', 'Rock Bar Ayana', 'Ku De Ta Sunset Drinks', 'Single Fin Uluwatu', 'Biku Restaurant & Bar', 'Kopi Luwak Coffee Tasting', 'Fresh Coconut Water Stands', 'Balinese Cooking Class with Market Tour', 'Traditional Arak Tasting'],
     activities: ['Radiantly Alive Yoga Studio', 'Casa Luna Cooking School', 'Karsa Spa Traditional Massage', 'Mount Batur Volcano Hiking', 'Blue Lagoon Snorkeling', 'Campuhan Ridge Walk', 'Nyoman Ada Traditional Art'],
     accommodations: ['COMO Shambhala Estate', 'Hanging Gardens of Bali', 'Komaneka at Bisma', 'Hostel Recommendation'],
     transport: ['Scooter Rental', 'Private Driver', 'Airport Transfer', 'Boat to Nusa Penida'],
@@ -37,7 +37,7 @@ const destinationDatabase: Record<string, DestinationData> = {
   },
   'new york': {
     attractions: ['Statue of Liberty & Ellis Island', 'Central Park Conservancy', 'Times Square', 'Empire State Building', 'Brooklyn Bridge', '9/11 Memorial & Museum', 'High Line Park', 'One World Observatory', 'Metropolitan Museum of Art'],
-    restaurants: ['Eleven Madison Park', 'Peter Luger Steak House', 'Katz\'s Delicatessen', 'Joe\'s Pizza', 'Shake Shack Madison Square', 'The Halal Guys'],
+    restaurants: ['Eleven Madison Park', 'Peter Luger Steak House', 'Katz\'s Delicatessen', 'Joe\'s Pizza', 'Shake Shack Madison Square', 'The Halal Guys', 'Le Bernardin', 'Daniel Restaurant', 'Gramercy Tavern', 'Union Square Café', 'Xi\'an Famous Foods', 'Russ & Daughters', 'Lombardi\'s Pizza', 'Junior\'s Cheesecake', 'Serendipity 3', 'Rainbow Room', 'Please Don\'t Tell (PDT) Speakeasy', 'Rooftop at 230 Fifth', 'Brooklyn Brewery Tour', 'Chelsea Market Food Hall', 'Smorgasburg Food Market', 'Coffee Project NY', 'Levain Bakery Cookies', 'Magnolia Bakery'],
     activities: ['Broadway Theatre Show', 'Yankee Stadium Game', 'Staten Island Ferry Ride', 'Chelsea Market Food Tour', 'Central Park Walking Tour', 'Manhattan Helicopter Tour', 'Blue Note Jazz Club'],
     accommodations: ['The Plaza', 'The Standard', 'Pod Hotels', 'HI New York City Hostel'],
     transport: ['MetroCard', 'Yellow Taxi', 'Uber/Lyft', 'Airport Transfer'],
@@ -45,7 +45,7 @@ const destinationDatabase: Record<string, DestinationData> = {
   },
   'london': {
     attractions: ['Big Ben & Houses of Parliament', 'Tower of London', 'British Museum', 'London Eye', 'Buckingham Palace', 'Westminster Abbey', 'Tate Modern', 'Hyde Park', 'Camden Market'],
-    restaurants: ['Dishoom Covent Garden', 'Sketch Mayfair', 'Gordon Ramsay Hell\'s Kitchen', 'Borough Market Food Hall', 'Poppies Fish & Chips', 'Fortnum & Mason Afternoon Tea'],
+    restaurants: ['Dishoom Covent Garden', 'Sketch Mayfair', 'Gordon Ramsay Hell\'s Kitchen', 'Borough Market Food Hall', 'Poppies Fish & Chips', 'Fortnum & Mason Afternoon Tea', 'The Ivy Restaurant', 'Rules Restaurant', 'Simpson\'s in the Strand', 'Hawksmoor Steakhouse', 'Brick Lane Curry Houses', 'Honest Burgers', 'Monmouth Coffee Company', 'The Shard View Restaurant', 'Sky Garden Bar', 'Churchill Arms Thai Kitchen', 'Leadenhall Market Pubs', 'Connaught Bar', 'American Bar at The Savoy', 'Ye Olde Cheshire Cheese Pub', 'Camden Market Street Food', 'Maltby Street Market', 'English Breakfast at The Breakfast Club', 'High Tea at Claridge\'s'],
     activities: ['Thames Clipper River Cruise', 'Lion King West End', 'London Pub Crawl', 'Royal Observatory Greenwich', 'Warner Bros Harry Potter Studio', 'Jack the Ripper Ghost Walk', 'Wembley Stadium Tour'],
     accommodations: ['The Savoy', 'Claridge\'s', 'Premier Inn', 'YHA London'],
     transport: ['Oyster Card', 'London Bus Tour', 'Black Cab', 'Heathrow Express'],
@@ -56,7 +56,7 @@ const destinationDatabase: Record<string, DestinationData> = {
 // Generic activities for destinations not in database
 const genericActivities: DestinationData = {
   attractions: ['City Center Tour', 'Historical District Walk', 'Local Museum Visit', 'Scenic Viewpoint', 'Cultural Site', 'Religious Monument', 'Art Gallery'],
-  restaurants: ['Local Cuisine Restaurant', 'Street Food Tour', 'Fine Dining Experience', 'Traditional Breakfast', 'Rooftop Restaurant', 'Local Market Food'],
+  restaurants: ['Local Cuisine Restaurant', 'Street Food Tour', 'Fine Dining Experience', 'Traditional Breakfast', 'Rooftop Restaurant', 'Local Market Food', 'Coffee Shop & Café', 'Wine Bar & Tasting', 'Local Brewery Visit', 'Traditional Tea House', 'Cooking Class with Meal', 'Food Market Tour', 'Sunset Cocktail Bar', 'Local Bakery & Pastries', 'Farm-to-Table Restaurant', 'Ethnic Food District', 'Happy Hour Spots', 'Late Night Eats'],
   activities: ['Walking Tour', 'Cultural Experience', 'Local Workshop', 'Photography Tour', 'Sunset Viewing', 'Local Music/Dance Show', 'Nature Walk'],
   accommodations: ['City Center Hotel', 'Boutique Hotel', 'Local Guesthouse', 'Budget Accommodation'],
   transport: ['Local Transport Pass', 'Airport Transfer', 'City Tour Bus', 'Taxi Service'],
@@ -158,11 +158,11 @@ const generateActivity = (
       
       if (dayNumber === 1) {
         title = getRandomItem(destinationData.attractions);
-        description = `Start your ${destination} adventure with this iconic attraction`;
+        description = `Begin your ${destination} journey with this must-see attraction`;
         cost = 25; // Keep cost for attractions
       } else {
         title = getRandomItem(destinationData.activities);
-        description = `Morning activity to explore local culture`;
+        description = `Morning activity to immerse in local culture and experiences`;
         cost = 15; // Keep cost for activities
       }
       break;
@@ -172,7 +172,7 @@ const generateActivity = (
       startTime = '12:00';
       endTime = '13:30';
       title = getRandomItem(destinationData.restaurants);
-      description = `Enjoy authentic local cuisine`;
+      description = `Savor authentic local flavors and specialties`;
       cost = undefined; // Remove cost for restaurants
       break;
       
@@ -183,11 +183,11 @@ const generateActivity = (
       
       if (tripType === 'adventure') {
         title = getRandomItem(destinationData.activities);
-        description = `Exciting adventure activity`;
+        description = `Thrilling adventure activity with local guides`;
         cost = 45; // Keep cost for activities
       } else {
         title = getRandomItem(destinationData.attractions);
-        description = `Explore more of ${destination}'s highlights`;
+        description = `Discover more of ${destination}'s cultural highlights and hidden gems`;
         cost = 20; // Keep cost for attractions
       }
       break;
@@ -197,7 +197,7 @@ const generateActivity = (
       startTime = '19:00';
       endTime = '21:00';
       title = getRandomItem(destinationData.restaurants);
-      description = `Fine dining experience with local specialties`;
+      description = `Delightful dinner featuring regional cuisine and drinks`;
       cost = undefined; // Remove cost for restaurants
       break;
       
@@ -206,7 +206,7 @@ const generateActivity = (
       startTime = '21:30';
       endTime = '23:00';
       title = getRandomItem(destinationData.activities);
-      description = `Evening entertainment and nightlife`;
+      description = `Evening entertainment, nightlife, and local drinks scene`;
       cost = 25; // Keep cost for activities
       break;
       
