@@ -20,6 +20,7 @@ export interface TripPlanningRequest {
   startDate: string;
   endDate: string;
   tripType: string;
+  generation: string;
   collaborators: string[];
 }
 
@@ -82,7 +83,9 @@ Trip Details:
 - Destination: ${request.destination}
 - Duration: ${duration} days
 - Trip Type: ${request.tripType}
+- Generation: ${request.generation}
 - Travel Style: ${getTripStyleDescription(request.tripType)}
+- Generational Preferences: ${getGenerationDescription(request.generation)}
 ${request.collaborators.length > 0 ? `- Traveling with: ${request.collaborators.length} other people` : '- Solo travel'}
 
 Please provide a comprehensive trip plan in JSON format with the following structure:
@@ -136,10 +139,13 @@ Requirements:
 7. Consider travel time between activities
 8. Include rest periods and meal times
 9. Adapt suggestions based on the "${request.tripType}" trip type
+11. Tailor experiences to ${request.generation} preferences and interests
 9. Include diverse food and drink experiences: local cuisine, street food, cafés, bars, cooking classes, food markets, and beverage tastings
 10. Suggest breakfast, lunch, dinner, and snack options with variety in dining styles and price points
 
 Focus on creating an authentic, well-researched itinerary that captures the essence of ${request.destination} while catering to a ${request.tripType} travel style. Pay special attention to the local food and drink culture, including traditional dishes, popular beverages, dining customs, and unique culinary experiences.
+
+GENERATIONAL FOCUS: Ensure all recommendations align with ${request.generation} preferences - ${getGenerationDescription(request.generation)}. Consider their typical social media usage, budget expectations, accommodation preferences, and activity interests.
 
 CRITICAL: Always include outbound flight from ${request.fromLocation} to ${request.destination} on Day 1, and return flight from ${request.destination} to ${request.fromLocation} on the final day. Include realistic flight times, airlines, and costs.
 `;
@@ -204,6 +210,23 @@ const getTripStyleDescription = (tripType: string): string => {
       return 'Nature-focused with wildlife, parks, and outdoor exploration';
     default:
       return 'Balanced mix of sightseeing, culture, and leisure activities';
+  }
+};
+
+const getGenerationDescription = (generation: string): string => {
+  switch (generation) {
+    case 'gen-z':
+      return 'Gen Z travelers prefer authentic, Instagram-worthy experiences, sustainable options, budget-friendly choices, unique local spots, social media hotspots, and diverse food scenes. They value experiences over luxury and seek out hidden gems.';
+    case 'millennial':
+      return 'Millennials prioritize unique experiences, work-life balance, mid-range accommodations, food and wine culture, wellness activities, and tech-enabled travel. They appreciate both popular attractions and off-the-beaten-path discoveries.';
+    case 'gen-x':
+      return 'Gen X travelers value independence, practical choices, good value for money, comfortable accommodations, family-friendly options, and efficient planning. They prefer a mix of relaxation and cultural experiences.';
+    case 'boomer':
+      return 'Baby Boomers prefer comfortable, well-organized travel with quality accommodations, guided tours, cultural and historical sites, fine dining, and accessible activities. They value service quality and traditional experiences.';
+    case 'gen-alpha':
+      return 'Gen Alpha travelers (with families) need tech-integrated, educational, and interactive experiences, family-friendly accommodations, safe environments, and activities that blend digital and physical experiences.';
+    default:
+      return 'Balanced approach suitable for diverse age groups and preferences';
   }
 };
 

@@ -13,6 +13,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [tripType, setTripType] = useState('relaxation');
+  const [generation, setGeneration] = useState('gen-z');
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [collaborators, setCollaborators] = useState<string[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
@@ -88,6 +89,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
       startDate,
       endDate,
       tripType,
+      generation,
       collaborators
     });
   };
@@ -312,6 +314,30 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
               </div>
+            </div>
+
+            {/* Generation Selection */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What generation are you?
+              </label>
+              <div className="relative">
+                <select
+                  value={generation}
+                  onChange={(e) => setGeneration(e.target.value)}
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all appearance-none pr-10"
+                >
+                  <option value="gen-z">Gen Z (1997-2012) - Social media savvy, authentic experiences</option>
+                  <option value="millennial">Millennial (1981-1996) - Experience-focused, tech-enabled</option>
+                  <option value="gen-x">Gen X (1965-1980) - Independent, value-conscious</option>
+                  <option value="boomer">Baby Boomer (1946-1964) - Comfort-focused, traditional</option>
+                  <option value="gen-alpha">Gen Alpha (2013+) - Digital natives, family-oriented</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                This helps us tailor recommendations to your generational preferences
+              </p>
             </div>
 
             {/* Dates */}

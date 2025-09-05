@@ -67,6 +67,7 @@ export const generateActivitySuggestions = (
   fromLocation: string,
   destination: string, 
   tripType: string, 
+  generation: string,
   dayItineraries: DayItinerary[]
 ): DayItinerary[] => {
   const destinationKey = destination.toLowerCase().split(',')[0].trim();
@@ -102,6 +103,7 @@ export const generateActivitySuggestions = (
       'morning', 
       dayNumber, 
       tripType,
+      generation,
       destination
     );
     if (morningActivity) activities.push(morningActivity);
@@ -112,6 +114,7 @@ export const generateActivitySuggestions = (
       'lunch', 
       dayNumber, 
       tripType,
+      generation,
       destination
     );
     if (lunchActivity) activities.push(lunchActivity);
@@ -122,6 +125,7 @@ export const generateActivitySuggestions = (
       'afternoon', 
       dayNumber, 
       tripType,
+      generation,
       destination
     );
     if (afternoonActivity) activities.push(afternoonActivity);
@@ -132,6 +136,7 @@ export const generateActivitySuggestions = (
       'dinner', 
       dayNumber, 
       tripType,
+      generation,
       destination
     );
     if (dinnerActivity) activities.push(dinnerActivity);
@@ -143,6 +148,7 @@ export const generateActivitySuggestions = (
         'evening', 
         dayNumber, 
         tripType,
+        generation,
         destination
       );
       if (eveningActivity) activities.push(eveningActivity);
@@ -161,6 +167,7 @@ const generateActivity = (
   timeSlot: string,
   dayNumber: number,
   tripType: string,
+  generation: string,
   destination: string
 ): Activity | null => {
   let category: ActivityCategory;
@@ -179,11 +186,11 @@ const generateActivity = (
       
       if (dayNumber === 1) {
         title = getRandomItem(destinationData.attractions);
-        description = `Begin your ${destination} journey with this must-see attraction`;
+        description = `Begin your ${destination} journey with this ${getGenerationAdjective(generation)} attraction`;
         cost = 25; // Keep cost for attractions
       } else {
         title = getRandomItem(destinationData.activities);
-        description = `Morning activity to immerse in local culture and experiences`;
+        description = `${getGenerationAdjective(generation)} morning activity to immerse in local culture`;
         cost = 15; // Keep cost for activities
       }
       break;
@@ -193,7 +200,7 @@ const generateActivity = (
       startTime = '12:00';
       endTime = '13:30';
       title = getRandomItem(destinationData.restaurants);
-      description = `Savor authentic local flavors and specialties`;
+      description = `${getGenerationFoodDescription(generation)} local flavors and specialties`;
       cost = undefined; // Remove cost for restaurants
       break;
       
@@ -204,11 +211,11 @@ const generateActivity = (
       
       if (tripType === 'adventure') {
         title = getRandomItem(destinationData.activities);
-        description = `Thrilling adventure activity with local guides`;
+        description = `${getGenerationAdjective(generation)} adventure activity with local guides`;
         cost = 45; // Keep cost for activities
       } else {
         title = getRandomItem(destinationData.attractions);
-        description = `Discover more of ${destination}'s cultural highlights and hidden gems`;
+        description = `Discover ${getGenerationAdjective(generation)} cultural highlights and hidden gems in ${destination}`;
         cost = 20; // Keep cost for attractions
       }
       break;
@@ -218,7 +225,7 @@ const generateActivity = (
       startTime = '19:00';
       endTime = '21:00';
       title = getRandomItem(destinationData.restaurants);
-      description = `Delightful dinner featuring regional cuisine and drinks`;
+      description = `${getGenerationFoodDescription(generation)} dinner featuring regional cuisine and drinks`;
       cost = undefined; // Remove cost for restaurants
       break;
       
@@ -227,7 +234,7 @@ const generateActivity = (
       startTime = '21:30';
       endTime = '23:00';
       title = getRandomItem(destinationData.activities);
-      description = `Evening entertainment, nightlife, and local drinks scene`;
+      description = `${getGenerationAdjective(generation)} evening entertainment and local nightlife scene`;
       cost = 25; // Keep cost for activities
       break;
       
@@ -317,6 +324,40 @@ const estimateFlightCost = (fromLocation: string, toLocation: string): number =>
 
 const getRandomItem = (array: string[]): string => {
   return array[Math.floor(Math.random() * array.length)];
+};
+
+const getGenerationAdjective = (generation: string): string => {
+  switch (generation) {
+    case 'gen-z':
+      return 'Instagram-worthy';
+    case 'millennial':
+      return 'Experience-focused';
+    case 'gen-x':
+      return 'Well-planned';
+    case 'boomer':
+      return 'Classic';
+    case 'gen-alpha':
+      return 'Interactive';
+    default:
+      return 'Popular';
+  }
+};
+
+const getGenerationFoodDescription = (generation: string): string => {
+  switch (generation) {
+    case 'gen-z':
+      return 'Discover trendy and authentic';
+    case 'millennial':
+      return 'Experience artisanal';
+    case 'gen-x':
+      return 'Enjoy quality';
+    case 'boomer':
+      return 'Savor traditional';
+    case 'gen-alpha':
+      return 'Explore family-friendly';
+    default:
+      return 'Savor delicious';
+  }
 };
 
 const getTripTypeDescription = (tripType: string): string => {

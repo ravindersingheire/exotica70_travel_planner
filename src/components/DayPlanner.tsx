@@ -8,6 +8,7 @@ interface DayPlannerProps {
   day: DayItinerary;
   destination: string;
   tripType: string;
+  generation: string;
   onAddActivity: () => void;
   onEditActivity: (activity: Activity) => void;
   onDeleteActivity: (dayId: string, activityId: string) => void;
@@ -19,6 +20,7 @@ export const DayPlanner: React.FC<DayPlannerProps> = ({
   day,
   destination,
   tripType,
+  generation,
   onAddActivity,
   onEditActivity,
   onDeleteActivity,
@@ -50,7 +52,7 @@ export const DayPlanner: React.FC<DayPlannerProps> = ({
 
     // Generate new suggestion for this specific activity
     const tempDay = { ...day, activities: [activityToReplace] };
-    const suggestedDays = generateActivitySuggestions(destination, tripType, [tempDay]);
+    const suggestedDays = generateActivitySuggestions('', destination, tripType, generation, [tempDay]);
     
     if (suggestedDays[0] && suggestedDays[0].activities.length > 0) {
       const newSuggestion = suggestedDays[0].activities[0];

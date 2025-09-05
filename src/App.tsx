@@ -27,6 +27,7 @@ function App() {
   const [currentState, setCurrentState] = useState<AppState>('planning');
   const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
   const [currentTripType, setCurrentTripType] = useState<string>('');
+  const [currentGeneration, setCurrentGeneration] = useState<string>('gen-z');
   const [showInspireMe, setShowInspireMe] = useState(false);
   const [inspirationDestination, setInspirationDestination] = useState('');
   const [showLogin, setShowLogin] = useState(false);
@@ -156,6 +157,7 @@ function App() {
       
       setCurrentTrip(trip);
       setCurrentTripType(tripData.tripType || '');
+      setCurrentGeneration(tripData.generation || 'gen-z');
       setAiInsights(insights);
       setIsGeneratingTrip(false);
       
@@ -180,6 +182,7 @@ function App() {
 
       setCurrentTrip(newTrip);
       setCurrentTripType(tripData.tripType || '');
+      setCurrentGeneration(tripData.generation || 'gen-z');
       setCurrentState('itinerary');
       
       alert('Unable to generate AI suggestions. Using basic itinerary template.');
@@ -205,6 +208,7 @@ function App() {
 
     setCurrentTrip(newTrip);
     setCurrentTripType(tripData.tripType || '');
+    setCurrentGeneration(tripData.generation || 'gen-z');
     setCurrentState('itinerary');
   };
 
@@ -212,6 +216,7 @@ function App() {
     setCurrentState('planning');
     setCurrentTrip(null);
     setCurrentTripType('');
+    setCurrentGeneration('gen-z');
   };
 
   const handleShare = () => {
@@ -269,6 +274,7 @@ function App() {
     setCurrentState('planning');
     setCurrentTrip(null);
     setCurrentTripType('');
+    setCurrentGeneration('gen-z');
     setInspirationDestination('');
   };
 
@@ -292,6 +298,7 @@ function App() {
         <ItineraryView 
           trip={currentTrip} 
           tripType={currentTripType}
+         generation={currentGeneration}
           onBack={handleBackToPlanning}
         />
       ) : null}

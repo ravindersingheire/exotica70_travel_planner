@@ -11,11 +11,12 @@ import { ArrowLeft, Share2, Plus, Calendar, MapPin, PieChart } from 'lucide-reac
 interface ItineraryViewProps {
   trip: Trip;
   tripType?: string;
+  generation?: string;
   onBack: () => void;
 }
 
 export const ItineraryView: React.FC<ItineraryViewProps> = ({ trip, tripType = '', onBack }) => {
-  const initialDayItineraries = generateActivitySuggestions('Your Location', trip.destination, tripType, generateDayItineraries(trip));
+  const initialDayItineraries = generateActivitySuggestions('Your Location', trip.destination, tripType, 'gen-z', generateDayItineraries(trip));
   const [dayItineraries, setDayItineraries] = useState<DayItinerary[]>(initialDayItineraries);
   const [selectedDay, setSelectedDay] = useState<DayItinerary | null>(initialDayItineraries[0] || null);
   const [showActivityModal, setShowActivityModal] = useState(false);
@@ -184,6 +185,7 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ trip, tripType = '
                 day={selectedDay}
                destination={trip.destination}
                tripType={tripType}
+               generation="gen-z"
                 onAddActivity={() => setShowActivityModal(true)}
                 onEditActivity={handleEditActivity}
                 onDeleteActivity={handleDeleteActivity}
