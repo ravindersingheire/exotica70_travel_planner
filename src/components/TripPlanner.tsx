@@ -124,18 +124,18 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
 
   const openCalendar = (field?: 'start' | 'return') => {
     setShowCalendar(true);
-    if (startDate && endDate) {
-      // Both dates are set, determine which field to make active
-      setActiveField(field || 'start');
-      setIsFirstSelection(false);
+    if (!startDate && !endDate) {
+      // No dates set - start fresh
+      setActiveField('start');
+      setIsFirstSelection(true);
     } else if (startDate && !endDate) {
-      // Only start date is set
+      // Only start date is set - next should be return
       setActiveField('return');
       setIsFirstSelection(false);
     } else {
-      // No dates set
-      setActiveField('start');
-      setIsFirstSelection(true);
+      // Both dates are set - allow modification based on field clicked
+      setActiveField(field || 'start');
+      setIsFirstSelection(false);
     }
   };
 
@@ -297,12 +297,16 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
 
             {/* Dates */}
             <div className="relative">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                When are you thinking?
-              </label>
+              {(!startDate || !endDate) && (
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  When are you thinking?
+                </label>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="relative">
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
+                  {startDate && endDate && (
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
+                  )}
                   <div className="relative">
                     <Calendar 
                       className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer" 
@@ -311,8 +315,8 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                     <input
                       type="text"
                       value={formatDateForDisplay(startDate)}
-                      onClick={() => openCalendar('start')}
-                      placeholder="Select start date"
+                      onClick={() => setActiveField('start')}
+                      placeholder={startDate && endDate ? "" : "Select start date"}
                       readOnly
                       className={`w-full pl-12 pr-4 py-2.5 border-2 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer ${
                         activeField === 'start' && showCalendar ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200'
@@ -321,7 +325,9 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                   </div>
                 </div>
                 <div className="relative">
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Return Date</label>
+                  {startDate && endDate && (
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Return Date</label>
+                  )}
                   <div className="relative">
                     <Calendar 
                       className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer" 
@@ -330,8 +336,8 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                     <input
                       type="text"
                       value={formatDateForDisplay(endDate)}
-                      onClick={() => openCalendar('return')}
-                      placeholder="Select return date"
+                      onClick={() => setActiveField('return')}
+                      placeholder={startDate && endDate ? "" : "Select return date"}
                       readOnly
                       className={`w-full pl-12 pr-4 py-2.5 border-2 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer ${
                         activeField === 'return' && showCalendar ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200'
@@ -341,23 +347,32 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                 </div>
               </div>
               
-              {/* Custom Calendar Popup */}
+              {/* Custom Calendar Dropdown */}
               {showCalendar && (
-                <div 
-                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                  onClick={handleClickOutside}
-                >
-                  <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-6 max-w-2xl w-full mx-4">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 p-6 z-50 w-full min-w-[600px]">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
                       {activeField === 'start' ? 'Select Start Date' : 'Select Return Date'}
                     </h3>
-                    <button
-                      onClick={closeCalendar}
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => {
+                          setStartDate('');
+                          setEndDate('');
+                          setActiveField('start');
+                          setIsFirstSelection(true);
+                        }}
+                        className="px-3 py-1 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                      >
+                        Reset
+                      </button>
+                      <button
+                        onClick={closeCalendar}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -451,7 +466,6 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                       </p>
                     </div>
                   )}
-                </div>
                 </div>
               )}
             </div>
