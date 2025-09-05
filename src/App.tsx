@@ -6,7 +6,11 @@ import { ItineraryView } from './components/ItineraryView';
 import { InspireMeModal } from './components/InspireMeModal';
 import { LoginModal } from './components/LoginModal';
 import { SignupModal } from './components/SignupModal';
+import { LoadingModal } from './components/LoadingModal';
+import { AIInsightsModal } from './components/AIInsightsModal';
 import { Trip } from './types';
+import { generateTripPlan } from './lib/openai';
+import { convertAITripPlanToItinerary, AITripInsights } from './utils/aiTripConverter';
 import { supabase, signOut, onAuthStateChange } from './lib/supabase';
 
 interface User {
@@ -28,6 +32,9 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isGeneratingTrip, setIsGeneratingTrip] = useState(false);
+  const [aiInsights, setAiInsights] = useState<AITripInsights | null>(null);
+  const [showAIInsights, setShowAIInsights] = useState(false);
 
   // Listen for auth changes
   useEffect(() => {
@@ -118,7 +125,72 @@ function App() {
     console.log('Setting user data:', userData);
     setUser(userData);
   };
-  const handleTripCreate = (tripData: any) => {
+  const handleTripCreate = async (tripData: any) => {
+    setIsGeneratingTrip(true);
+    
+    try {
+      // Generate AI trip plan
+      const aiTripPlan = await generateTripPlan({
+        destination: tripData.destination,
+        startDate: tripData.startDate,
+        endDate: tripData.endDate,
+        tripType: tripData.tripType,
+        collaborators: tripData.collaborators || []
+      });
+
+      // Create trip object
+      const newTrip: Trip = {
+        id: crypto.randomUUID(),
+        title: `${tripData.destination} Trip`,
+        destination: tripData.destination,
+        startDate: tripData.startDate,
+        endDate: tripData.endDate,
+        collaborators: tripData.collaborators || [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      // Convert AI plan to itinerary format
+      const { trip, dayItineraries, aiInsights: insights } = convertAITripPlanToItinerary(aiTripPlan, newTrip);
+      
+      setCurrentTrip(trip);
+      setCurrentTripType(tripData.tripType || '');
+      setAiInsights(insights);
+      setIsGeneratingTrip(false);
+      
+      // Show AI insights modal first
+      setShowAIInsights(true);
+      
+    } catch (error) {
+      console.error('Error generating trip plan:', error);
+      setIsGeneratingTrip(false);
+      
+      // Fallback to basic trip creation
+      const newTrip: Trip = {
+        id: crypto.randomUUID(),
+        title: `${tripData.destination} Trip`,
+        destination: tripData.destination,
+        startDate: tripData.startDate,
+        endDate: tripData.endDate,
+        collaborators: tripData.collaborators || [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      setCurrentTrip(newTrip);
+      setCurrentTripType(tripData.tripType || '');
+      setCurrentState('itinerary');
+      
+      alert('Unable to generate AI suggestions. Using basic itinerary template.');
+    }
+  };
+
+  const handleAIInsightsClose = () => {
+    setShowAIInsights(false);
+    setCurrentState('itinerary');
+  };
+
+  const handleTripCreateBasic = (tripData: any) => {
     const newTrip: Trip = {
       id: crypto.randomUUID(),
       title: `${tripData.destination} Trip`,
@@ -243,6 +315,21 @@ function App() {
           onClose={() => setShowSignup(false)}
           onSwitchToLogin={handleSwitchToLogin}
           onSignupSuccess={handleLoginSuccess}
+        />
+      )}
+
+      {/* Loading Modal */}
+      <LoadingModal 
+        destination={currentTrip?.destination || ''} 
+        isVisible={isGeneratingTrip} 
+      />
+
+      {/* AI Insights Modal */}
+      {showAIInsights && aiInsights && (
+        <AIInsightsModal
+          insights={aiInsights}
+          destination={currentTrip?.destination || ''}
+          onClose={handleAIInsightsClose}
         />
       )}
     </div>
