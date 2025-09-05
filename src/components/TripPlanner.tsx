@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Users, Plus, Sparkles, UserPlus, Lightbulb, X } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, Sparkles, UserPlus, Lightbulb, X, ChevronDown } from 'lucide-react';
 
 interface TripPlannerProps {
   onTripCreate: (tripData: any) => void;
@@ -16,7 +16,8 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
   const [collaborators, setCollaborators] = useState<string[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [selectingStartDate, setSelectingStartDate] = useState(true);
+  const [activeField, setActiveField] = useState<'start' | 'return' | null>(null);
+  const [isFirstSelection, setIsFirstSelection] = useState(true);
 
   // Beautiful travel videos from Pexels - various landscapes and experiences
   const travelVideos = [
@@ -90,19 +91,62 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
   };
 
   const handleDateSelect = (date: string) => {
-    if (selectingStartDate) {
+    if (isFirstSelection) {
+      // First selection is always start date
       setStartDate(date);
-      setSelectingStartDate(false);
+      setActiveField('return');
+      setIsFirstSelection(false);
     } else {
-      setEndDate(date);
-      setShowCalendar(false);
-      setSelectingStartDate(true);
+      if (activeField === 'start') {
+        // If new start date is after current end date, reset end date
+        if (endDate && new Date(date) >= new Date(endDate)) {
+          setStartDate(date);
+          setEndDate('');
+          setActiveField('return');
+          setIsFirstSelection(false);
+        } else {
+          setStartDate(date);
+        }
+      } else {
+        // Selecting return date
+        if (new Date(date) <= new Date(startDate)) {
+          // If return date is before or same as start date, make it the new start date
+          setStartDate(date);
+          setEndDate('');
+          setActiveField('return');
+          setIsFirstSelection(false);
+        } else {
+          setEndDate(date);
+        }
+      }
     }
   };
 
-  const openCalendar = () => {
+  const openCalendar = (field?: 'start' | 'return') => {
     setShowCalendar(true);
-    setSelectingStartDate(true);
+    if (startDate && endDate) {
+      // Both dates are set, determine which field to make active
+      setActiveField(field || 'start');
+      setIsFirstSelection(false);
+    } else if (startDate && !endDate) {
+      // Only start date is set
+      setActiveField('return');
+      setIsFirstSelection(false);
+    } else {
+      // No dates set
+      setActiveField('start');
+      setIsFirstSelection(true);
+    }
+  };
+
+  const closeCalendar = () => {
+    setShowCalendar(false);
+  };
+
+  const handleClickOutside = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeCalendar();
+    }
   };
 
   const getCurrentMonth = () => {
@@ -232,20 +276,23 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 What type of trip are you planning?
               </label>
-              <select
-                value={tripType}
-                onChange={(e) => setTripType(e.target.value)}
-                className="w-full px-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all appearance-none"
-              >
-                <option value="relaxation">Relaxation</option>
-                <option value="adventure">Adventure</option>
-                <option value="family">Family</option>
-                <option value="romantic">Romantic</option>
-                <option value="business">Business</option>
-                <option value="cultural">Cultural</option>
-                <option value="food">Food & Culinary</option>
-                <option value="nature">Nature & Wildlife</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={tripType}
+                  onChange={(e) => setTripType(e.target.value)}
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all appearance-none pr-10"
+                >
+                  <option value="relaxation">Relaxation</option>
+                  <option value="adventure">Adventure</option>
+                  <option value="family">Family</option>
+                  <option value="romantic">Romantic</option>
+                  <option value="business">Business</option>
+                  <option value="cultural">Cultural</option>
+                  <option value="food">Food & Culinary</option>
+                  <option value="nature">Nature & Wildlife</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
+              </div>
             </div>
 
             {/* Dates */}
@@ -259,15 +306,17 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                   <div className="relative">
                     <Calendar 
                       className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer" 
-                      onClick={openCalendar}
+                      onClick={() => openCalendar('start')}
                     />
                     <input
                       type="text"
                       value={formatDateForDisplay(startDate)}
-                      onClick={openCalendar}
+                      onClick={() => openCalendar('start')}
                       placeholder="Select start date"
                       readOnly
-                      className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer"
+                      className={`w-full pl-12 pr-4 py-2.5 border-2 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer ${
+                        activeField === 'start' && showCalendar ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200'
+                      }`}
                     />
                   </div>
                 </div>
@@ -276,15 +325,17 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                   <div className="relative">
                     <Calendar 
                       className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer" 
-                      onClick={openCalendar}
+                      onClick={() => openCalendar('return')}
                     />
                     <input
                       type="text"
                       value={formatDateForDisplay(endDate)}
-                      onClick={openCalendar}
+                      onClick={() => openCalendar('return')}
                       placeholder="Select return date"
                       readOnly
-                      className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer"
+                      className={`w-full pl-12 pr-4 py-2.5 border-2 bg-white rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all cursor-pointer ${
+                        activeField === 'return' && showCalendar ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200'
+                      }`}
                     />
                   </div>
                 </div>
@@ -292,13 +343,17 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
               
               {/* Custom Calendar Popup */}
               {showCalendar && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 p-4">
+                <div 
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                  onClick={handleClickOutside}
+                >
+                  <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-6 max-w-2xl w-full mx-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
-                      {selectingStartDate ? 'Select Start Date' : 'Select Return Date'}
+                      {activeField === 'start' ? 'Select Start Date' : 'Select Return Date'}
                     </h3>
                     <button
-                      onClick={() => setShowCalendar(false)}
+                      onClick={closeCalendar}
                       className="text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       <X className="h-5 w-5" />
@@ -396,6 +451,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ onTripCreate, onInspir
                       </p>
                     </div>
                   )}
+                </div>
                 </div>
               )}
             </div>
